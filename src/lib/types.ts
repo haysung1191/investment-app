@@ -9,7 +9,7 @@ export type ChainSection = {
 export type Candidate = {
   ticker: string;
   name: string;
-  market: Market;
+  market: Market | string;
   rationale: string;
   score: number;
   confidence: number;
