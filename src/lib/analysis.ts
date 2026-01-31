@@ -8,10 +8,10 @@ import krNameMap from "./universe/kr_name_map.json";
 const MODEL_NAME = (process.env.GEMINI_MODEL || "gemini-3-flash-preview").trim();
 
 const STAGES = [
-  "??1李??④낵 (Direct Effect)",
-  "??2李??④낵 (Market Reaction)",
-  "??3李??④낵 (Political Response)",
-  "??4李??④낵 (Financial Impact)",
+  "1차 효과 (Direct Effect)",
+  "2차 효과 (Market Reaction)",
+  "3차 효과 (Political Response)",
+  "4차 효과 (Financial Impact)",
 ];
 
 const MAX_CANDIDATES = 12;
