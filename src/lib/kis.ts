@@ -1,4 +1,5 @@
 import type { Quote } from "./types";
+import usExchangeMap from "./universe/us_exchange_map.json";
 
 const BASE_URL_REAL = "https://openapi.koreainvestment.com:9443";
 const BASE_URL_VTS = "https://openapivts.koreainvestment.com:29443";
@@ -24,8 +25,8 @@ const finCache = new Map<string, { data: Quote["fundamentals"]; expiresAt: numbe
 
 const QUOTE_TTL_MS = 20_000;
 const FIN_TTL_MS = 24 * 60 * 60 * 1000;
-const REQUEST_TIMEOUT_MS = 8_000;
-const DAILY_LOOKBACK_DAYS = 120; // FINAL spec: technical window
+const REQUEST_TIMEOUT_MS = 12_000;
+const DAILY_LOOKBACK_DAYS = 60;
 
 const now = () => Date.now();
 
@@ -403,7 +404,8 @@ async function fetchOverseasQuote(ticker: string): Promise<Quote> {
     return cached.data;
   }
 
-  const exchanges = ["NAS", "NYS", "AMS"];
+  const mappedExchange = (usExchangeMap as Record<string, string>)[ticker];
+  const exchanges = mappedExchange ? [mappedExchange] : ["NAS", "NYS", "AMS"];
 
   for (const exchange of exchanges) {
     const params = new URLSearchParams({
@@ -512,5 +514,5 @@ export async function fetchQuotes(tickers: string[]): Promise<Quote[]> {
     }
   });
 
-  return runWithConcurrency(tasks, 3);
+  return runWithConcurrency(tasks, 2);
 }

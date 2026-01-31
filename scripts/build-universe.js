@@ -6,6 +6,13 @@ const ROOT = process.cwd();
 const SOURCE_DIR = path.join(ROOT, "종목정보파일");
 const OUTPUT_KR = path.join(ROOT, "src", "lib", "universe", "kr.json");
 const OUTPUT_US = path.join(ROOT, "src", "lib", "universe", "us.json");
+const OUTPUT_US_EXCHANGE_MAP = path.join(
+  ROOT,
+  "src",
+  "lib",
+  "universe",
+  "us_exchange_map.json"
+);
 const OUTPUT_KR_NAME_MAP = path.join(
   ROOT,
   "src",
@@ -72,8 +79,16 @@ const buildKrUniverse = () => {
   return { tickers: Array.from(set).sort(), nameMap };
 };
 
+const exchangeForFile = (file) => {
+  if (file.startsWith("NAS")) return "NAS";
+  if (file.startsWith("NYS")) return "NYS";
+  if (file.startsWith("AMS")) return "AMS";
+  return "NAS";
+};
+
 const buildUsUniverse = () => {
   const set = new Set();
+  const exchangeMap = {};
   for (const file of usFiles) {
     const filePath = path.join(SOURCE_DIR, file);
     if (!fs.existsSync(filePath)) continue;
@@ -86,10 +101,13 @@ const buildUsUniverse = () => {
       if (!symbol) continue;
       if (/^[A-Z0-9.]+$/.test(symbol)) {
         set.add(symbol);
+        if (!exchangeMap[symbol]) {
+          exchangeMap[symbol] = exchangeForFile(file);
+        }
       }
     }
   }
-  return Array.from(set).sort();
+  return { tickers: Array.from(set).sort(), exchangeMap };
 };
 
 if (!fs.existsSync(SOURCE_DIR)) {
@@ -102,9 +120,10 @@ const us = buildUsUniverse();
 
 fs.mkdirSync(path.dirname(OUTPUT_KR), { recursive: true });
 fs.writeFileSync(OUTPUT_KR, JSON.stringify(kr.tickers, null, 2));
-fs.writeFileSync(OUTPUT_US, JSON.stringify(us, null, 2));
+fs.writeFileSync(OUTPUT_US, JSON.stringify(us.tickers, null, 2));
+fs.writeFileSync(OUTPUT_US_EXCHANGE_MAP, JSON.stringify(us.exchangeMap, null, 2));
 fs.writeFileSync(OUTPUT_KR_NAME_MAP, JSON.stringify(kr.nameMap, null, 2));
 
 console.log(`KR tickers: ${kr.tickers.length}`);
-console.log(`US tickers: ${us.length}`);
+console.log(`US tickers: ${us.tickers.length}`);
 console.log("Universe files updated.");
