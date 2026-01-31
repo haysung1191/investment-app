@@ -9,9 +9,9 @@ export async function POST(request: Request) {
     const article = typeof payload.article === "string" ? payload.article : undefined;
     const isMarket = (value: unknown): value is Market =>
       value === "KR" || value === "US";
-    const marketScope: Market[] = Array.isArray(payload.marketScope)
+    const marketScope = (Array.isArray(payload.marketScope)
       ? (payload.marketScope as unknown[]).filter(isMarket)
-      : ["KR", "US"];
+      : ["KR", "US"]) as Market[];
 
     if (!headline.trim()) {
       return NextResponse.json(

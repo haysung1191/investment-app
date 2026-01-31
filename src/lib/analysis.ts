@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+﻿import { GoogleGenerativeAI } from "@google/generative-ai";
 import { z } from "zod";
 import type { AnalysisPayload, Candidate, ChainSection, Market } from "./types";
 import krUniverse from "./universe/kr.json";
@@ -8,10 +8,10 @@ import krNameMap from "./universe/kr_name_map.json";
 const MODEL_NAME = (process.env.GEMINI_MODEL || "gemini-3-flash").trim();
 
 const STAGES = [
-  "② 1차 효과 (Direct Effect)",
-  "③ 2차 효과 (Market Reaction)",
-  "④ 3차 효과 (Political Response)",
-  "⑤ 4차 효과 (Financial Impact)",
+  "??1李??④낵 (Direct Effect)",
+  "??2李??④낵 (Market Reaction)",
+  "??3李??④낵 (Political Response)",
+  "??4李??④낵 (Financial Impact)",
 ];
 
 const MAX_CANDIDATES = 12;
@@ -56,50 +56,49 @@ const AnalysisSchema = z.object({
 const buildPrompt = (headline: string, article?: string, markets?: Market[]) => {
   const marketScope = markets?.length ? markets.join(", ") : "KR, US";
   const articleBlock = article
-    ? `\n[기사 요약]\n${article.trim()}\n`
+    ? `\n[湲곗궗 ?붿빟]\n${article.trim()}\n`
     : "";
 
   return `
-당신은 한국/미국 주식 시장을 분석하는 리서치 애널리스트입니다.
-아래 뉴스 헤드라인(및 기사 요약)을 읽고 인과 체인을 정리한 뒤,
-수혜/피해 가능성이 큰 종목 후보를 추출하세요.
+?뱀떊? ?쒓뎅/誘멸뎅 二쇱떇 ?쒖옣??遺꾩꽍?섎뒗 由ъ꽌移??좊꼸由ъ뒪?몄엯?덈떎.
+?꾨옒 ?댁뒪 ?ㅻ뱶?쇱씤(諛?湲곗궗 ?붿빟)???쎄퀬 ?멸낵 泥댁씤???뺣━????
+?섑삙/?쇳빐 媛?μ꽦????醫낅ぉ ?꾨낫瑜?異붿텧?섏꽭??
 
-[요구사항]
-- 출력은 반드시 JSON만 반환
-- 응답 언어: 한국어
-- 후보 종목은 ${marketScope} 시장만 포함
-- score는 0~100 정수, confidence는 0~1 실수
-- ticker는 거래소 표준 티커(미국은 AAPL 같은 심볼, 한국은 6자리 숫자)
+[?붽뎄?ы빆]
+- 異쒕젰? 諛섎뱶??JSON留?諛섑솚
+- ?묐떟 ?몄뼱: ?쒓뎅??- ?꾨낫 醫낅ぉ? ${marketScope} ?쒖옣留??ы븿
+- score??0~100 ?뺤닔, confidence??0~1 ?ㅼ닔
+- ticker??嫄곕옒???쒖? ?곗빱(誘멸뎅? AAPL 媛숈? ?щ낵, ?쒓뎅? 6?먮━ ?レ옄)
 
-[출력 JSON 형식]
+[異쒕젰 JSON ?뺤떇]
 {
-  "trigger": "핵심 사건 요약",
+  "trigger": "?듭떖 ?ш굔 ?붿빟",
   "stage_summaries": {
-    "direct_effect": "1차 효과 요약 1문장",
-    "market_reaction": "2차 효과 요약 1문장",
-    "political_response": "3차 효과 요약 1문장",
-    "financial_impact": "4차 효과 요약 1문장"
+    "direct_effect": "1李??④낵 ?붿빟 1臾몄옣",
+    "market_reaction": "2李??④낵 ?붿빟 1臾몄옣",
+    "political_response": "3李??④낵 ?붿빟 1臾몄옣",
+    "financial_impact": "4李??④낵 ?붿빟 1臾몄옣"
   },
-  "direct_effects": ["1차 효과", "..."],
-  "market_reaction": ["2차 효과", "..."],
-  "political_response": ["3차 효과", "..."],
-  "financial_impact": ["4차 효과", "..."],
+  "direct_effects": ["1李??④낵", "..."],
+  "market_reaction": ["2李??④낵", "..."],
+  "political_response": ["3李??④낵", "..."],
+  "financial_impact": ["4李??④낵", "..."],
   "candidates": [
     {
       "ticker": "005930",
-      "name": "삼성전자",
+      "name": "?쇱꽦?꾩옄",
       "market": "KR",
-      "rationale": "인과 체인과의 연결 근거 1~2문장",
+      "rationale": "?멸낵 泥댁씤怨쇱쓽 ?곌껐 洹쇨굅 1~2臾몄옣",
       "stage_tag": "Direct Effect | Market Reaction | Political Response | Financial Impact",
-      "stage_reason": "어떤 단계 요약과 연결되는지 1문장",
+      "stage_reason": "?대뼡 ?④퀎 ?붿빟怨??곌껐?섎뒗吏 1臾몄옣",
       "score": 78,
       "confidence": 0.72
     }
   ]
 }
 
-[입력]
-헤드라인: ${headline.trim()}
+[?낅젰]
+?ㅻ뱶?쇱씤: ${headline.trim()}
 ${articleBlock}
 `;
 };
@@ -140,7 +139,7 @@ const krNameMapRecord = krNameMap as Record<string, string>;
 const normalizeName = (value: string) =>
   value
     .toUpperCase()
-    .replace(/[\s\(\)\[\]\.\-·]/g, "")
+    .replace(/[\s\(\)\[\]\.\-쨌]/g, "")
     .trim();
 
 const validateCandidateTicker = (ticker: string, market: Market) => {
@@ -174,7 +173,7 @@ const toCandidates = (raw: z.infer<typeof AnalysisSchema>): Candidate[] => {
       ticker,
       name: String(candidate.name || "").trim() || "Unknown",
       market,
-      rationale: String(candidate.rationale || "").trim() || "연결 근거 없음",
+      rationale: String(candidate.rationale || "").trim() || "?곌껐 洹쇨굅 ?놁쓬",
       stageTag: String(candidate.stage_tag || "").trim() || undefined,
       stageReason: String(candidate.stage_reason || "").trim() || undefined,
       score: Number.isFinite(candidate.score)
@@ -215,7 +214,7 @@ const parseJson = (rawText: string) => {
   const parsed = JSON.parse(rawText);
   const result = AnalysisSchema.safeParse(parsed);
   if (!result.success) {
-    throw new Error("Gemini 응답 스키마 검증 실패");
+    throw new Error("Gemini ?묐떟 ?ㅽ궎留?寃利??ㅽ뙣");
   }
   return result.data;
 };
@@ -253,17 +252,24 @@ export async function runAnalysis({
 }: {
   headline: string;
   article?: string;
-  markets?: Market[];
+  markets?: Market[] | string[];
 }): Promise<AnalysisPayload> {
   const apiKey = (process.env.GEMINI_API_KEY || "").replace(/["']/g, "").trim();
   if (!apiKey) {
-    throw new Error("GEMINI_API_KEY가 설정되지 않았습니다.");
+    throw new Error("GEMINI_API_KEY媛 ?ㅼ젙?섏? ?딆븯?듬땲??");
   }
+
+  const normalizedMarkets =
+    markets && markets.length
+      ? (markets as string[])
+          .map((value) => value.toUpperCase())
+          .filter((value): value is Market => value === "KR" || value === "US")
+      : undefined;
 
   const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({ model: MODEL_NAME });
 
-  const prompt = buildPrompt(headline, article, markets);
+  const prompt = buildPrompt(headline, article, normalizedMarkets);
   const response = await model.generateContent({
     contents: [{ role: "user", parts: [{ text: prompt }] }],
     generationConfig: {
@@ -296,3 +302,4 @@ export async function runAnalysis({
     candidates: verifiedCandidates,
   };
 }
+
