@@ -5,7 +5,7 @@ import krUniverse from "./universe/kr.json";
 import usUniverse from "./universe/us.json";
 import krNameMap from "./universe/kr_name_map.json";
 
-const MODEL_NAME = (process.env.GEMINI_MODEL || "gemini-3-flash").trim();
+const MODEL_NAME = (process.env.GEMINI_MODEL || "gemini-3-flash-preview").trim();
 
 const STAGES = [
   "??1李??④낵 (Direct Effect)",
