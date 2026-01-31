@@ -11,7 +11,7 @@ export async function POST(request: Request) {
       value === "KR" || value === "US";
     const marketScope = (Array.isArray(payload.marketScope)
       ? (payload.marketScope as unknown[]).filter(isMarket)
-      : ["KR", "US"]) as Market[];
+      : ["KR", "US"]);
 
     if (!headline.trim()) {
       return NextResponse.json(
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     const analysis = await runAnalysis({
       headline: headline.trim(),
       article,
-      markets: marketScope,
+      markets: marketScope as Market[],
     });
 
     return NextResponse.json(analysis);
