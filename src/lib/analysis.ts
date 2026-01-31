@@ -167,7 +167,8 @@ const toCandidates = (raw: z.infer<typeof AnalysisSchema>): Candidate[] => {
       : ticker
       ? "US"
       : "UNKNOWN";
-    const market = providedMarket === "UNKNOWN" ? inferredMarket : providedMarket;
+    const market: Market =
+      providedMarket === "UNKNOWN" ? inferredMarket : providedMarket;
 
     return {
       ticker,
@@ -183,7 +184,7 @@ const toCandidates = (raw: z.infer<typeof AnalysisSchema>): Candidate[] => {
         ? Math.max(0, Math.min(1, Number(candidate.confidence)))
         : 0.5,
       verified: false,
-    };
+    } as Candidate;
   });
 };
 
