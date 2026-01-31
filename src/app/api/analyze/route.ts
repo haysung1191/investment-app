@@ -8,8 +8,10 @@ export async function POST(request: Request) {
     const headline = typeof payload.headline === "string" ? payload.headline : "";
     const article = typeof payload.article === "string" ? payload.article : undefined;
     const marketScope = Array.isArray(payload.marketScope)
-      ? (payload.marketScope as Market[])
-      : ["KR", "US"];
+      ? (payload.marketScope as unknown[])
+          .filter((value) => value === "KR" || value === "US")
+          .map((value) => value as Market)
+      : (["KR", "US"] as Market[]);
 
     if (!headline.trim()) {
       return NextResponse.json(
