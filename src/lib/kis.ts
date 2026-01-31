@@ -24,7 +24,7 @@ const finCache = new Map<string, { data: Quote["fundamentals"]; expiresAt: numbe
 
 const QUOTE_TTL_MS = 20_000;
 const FIN_TTL_MS = 24 * 60 * 60 * 1000;
-const REQUEST_TIMEOUT_MS = 4_000;
+const REQUEST_TIMEOUT_MS = 8_000;
 const DAILY_LOOKBACK_DAYS = 120; // FINAL spec: technical window
 
 const now = () => Date.now();
@@ -512,5 +512,5 @@ export async function fetchQuotes(tickers: string[]): Promise<Quote[]> {
     }
   });
 
-  return runWithConcurrency(tasks, 5);
+  return runWithConcurrency(tasks, 3);
 }
